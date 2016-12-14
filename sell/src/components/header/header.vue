@@ -10,13 +10,27 @@
 				<div class="deliver">
 					<span>{{seller.description}}</span>/{{seller.deliveryTime}}分钟送达
 				</div>
-				<div class="supports">
-					<span class="supports-icon"></span>
-					<span class="supports-type" v-if="seller.supports">{{seller.supports[0].description}}</span>
+				<div class="supports" v-if="seller.supports">
+					<span class="supports-icon" :class="classMap[seller.supports[0].type]"></span>
+					<span class="supports-type">{{seller.supports[0].description}}</span>
 				</div>
 			</div>
+			<div class="count-container" v-if="seller.supports">
+				<span class="count">{{seller.supports.length}}个</span>
+				<span class="right-arrow iconfont icon-keyboard_arrow_right"></span>
+			</div>
 		</div>
-		<div class="announcement"></div>
+		<div class="bulletin">
+			<span class="bulletin-img"></span>
+			<span class="bulletin-text">{{seller.bulletin}}</span>
+			<span class="bulletin-icon iconfont icon-keyboard_arrow_right"></span>
+		</div>
+		<div class="header-bg">
+			<img :src="seller.avatar" width="100%" alt="">
+		</div>
+		<div class="detail">
+			
+		</div>
 	</div>
 </template>
 <script>
@@ -25,14 +39,32 @@
 			seller: {
 				type: Object
 			}
+		},
+		created: function () {
+			this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
 		}
 	};
 </script>
 <style>
+	.header{
+		font-size: 0;
+		color:#fff;
+		overflow: hidden;
+		position: relative;
+		background-color: rgba(7,17,27,.5);
+	}
+	.header-bg{
+		position: absolute;
+		left:0;
+		top:0;
+		width:100%;
+		z-index: -1;
+		filter:blur(10px);
+
+	}
 	.content{
 		padding: 24px 12px 18px 24px;
-		background-color: #000;
-		font-size: 0;
+		position: relative;
 	}
 	.content img{
 		border-radius: 4px;
@@ -50,6 +82,7 @@
 	.content-right .title-name{
 		margin-left: 6px;
 		font-size: 16px;
+		font-weight: bold;
 		line-height: 18px;
 		vertical-align: top;
 	}
@@ -92,13 +125,102 @@
 		line-height: 12px;
 	}
 	@media (-webkit-min-device-pixel-ratio: 3){
-		.supports .supports-icon{
+		.supports .supports-icon.decrease{
 			background-image:url(decrease_1@3x.png);
+		}
+		.supports .supports-icon.discount{
+			background-image:url(discount_1@3x.png);
+		}
+		.supports .supports-icon.special{
+			background-image:url(special_1@3x.png);
+		}
+		.supports .supports-icon.invoice{
+			background-image:url(invoice_1@3x.png);
+		}
+		.supports .supports-icon.guarantee{
+			background-image:url(guarantee_1@3x.png);
 		}
 	}
 	@media (-webkit-min-device-pixel-ratio: 2){
-		.supports .supports-icon{
+		.supports .supports-icon.decrease{
 			background-image:url(decrease_1@2x.png);
 		}
+		.supports .supports-icon.discount{
+			background-image:url(discount_1@2x.png);
+		}
+		.supports .supports-icon.special{
+			background-image:url(special_1@2x.png);
+		}
+		.supports .supports-icon.invoice{
+			background-image:url(invoice_1@2x.png);
+		}
+		.supports .supports-icon.guarantee{
+			background-image:url(guarantee_1@2x.png);
+		}
+	}
+	.count-container{
+		position: absolute;
+		right:12px;
+		bottom:16px;
+		display: inline-block;
+		padding:0 8px;
+		background-color: rgba(0,0,0,.2);
+		font-size: 12px;
+		height: 24px;
+		line-height: 24px;
+		border-radius: 999px;
+		color:#fff;
+	}
+	.count-container .count{
+		display: inline-block;
+		vertical-align: top;
+	}
+	.bulletin{
+		height: 28px;
+		line-height: 28px;
+		font-size: 12px;
+		background-color: rgba(7,17,27,.2);
+		padding:0 22px 0 12px;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow:hidden;
+		position: relative;
+	}
+	.bulletin-img{
+		margin-right: 4px;
+		background-repeat: no-repeat;
+		background-size: 22px 12px;
+		display: inline-block;
+		margin-right: 4px;
+		width:22px;
+		height: 12px;
+		vertical-align: middle;
+	}
+	@media (-webkit-min-device-pixel-ratio: 3){
+		.bulletin-img{
+			background-image: url(bulletin@3x.png);
+		}
+	}
+	@media (-webkit-min-device-pixel-ratio: 2){
+		.bulletin-img{
+			background-image: url(bulletin@2x.png);
+		}
+	}
+	.bulletin-text{
+		vertical-align: top;
+	}
+	.bulletin-icon{
+		position: absolute;
+		right:10px;
+	}
+	.detail{
+		position: fixed;
+		top:0;
+		left:0;
+		width:100%;
+		height: 100%;
+		z-index: 1;
+		background-color: rgba(7,17,27,.8);
+		/*filter:blur(10px);*/
 	}
 </style>
