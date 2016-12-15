@@ -15,12 +15,12 @@
 					<span class="supports-type">{{seller.supports[0].description}}</span>
 				</div>
 			</div>
-			<div class="count-container" v-if="seller.supports">
+			<div class="count-container" v-if="seller.supports" @click="showDetail">
 				<span class="count">{{seller.supports.length}}个</span>
 				<span class="right-arrow iconfont icon-keyboard_arrow_right"></span>
 			</div>
 		</div>
-		<div class="bulletin">
+		<div class="bulletin" @click="showDetail">
 			<span class="bulletin-img"></span>
 			<span class="bulletin-text">{{seller.bulletin}}</span>
 			<span class="bulletin-icon iconfont icon-keyboard_arrow_right"></span>
@@ -28,16 +28,66 @@
 		<div class="header-bg">
 			<img :src="seller.avatar" width="100%" alt="">
 		</div>
-		<div class="detail">
-			
+		<div class="detail" v-show="showDetailFlag">
+			<div class="detail-container">
+				<div class="detail-wrap">
+					<div class="detail-title">
+						{{seller.name}}
+					</div>
+					<score :size="48" :type="seller.score"></score>
+					<div class="detail-content">
+						<div class="content-title">
+							<span class="line"></span>
+							<h2 class="supports-text">优惠信息</h2>	
+							<span class="line"></span>
+						</div>
+						<div class="supports-main">
+							<div v-for="supportItem in seller.supports" class="supports-list">
+								<span class="supports-icon iconfont" :class="classMap[supportItem.type]"></span>
+								<span class="supports-desc">{{supportItem.description}}</span>
+							</div>
+						</div>
+					</div>
+					<div class="detail-content">
+						<div class="content-title">
+							<span class="line"></span>
+							<h2 class="supports-text">商家公告</h2>	
+							<span class="line"></span>
+						</div>
+						<div class="bulletin-main">
+							{{seller.bulletin}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="detail-close">
+				<i class="iconfont icon-close" @click="closeDetail"></i>
+			</div>
 		</div>
 	</div>
 </template>
 <script>
+	import score from 'components/score/score.vue';
 	export default {
 		props: {
 			seller: {
 				type: Object
+			}
+		},
+		data: function () {
+			return {
+				showDetailFlag: false
+			};
+		},
+		components: {
+			score: score
+		},
+		methods: {
+			showDetail: function () {
+				this.showDetailFlag = true;
+			},
+			closeDetail: function () {
+				this.showDetailFlag = false;
 			}
 		},
 		created: function () {
@@ -46,6 +96,10 @@
 	};
 </script>
 <style>
+	*{
+		-webkit-box-sizing: border-box;
+		box-sizing: border-box;
+	}
 	.header{
 		font-size: 0;
 		color:#fff;
@@ -124,37 +178,60 @@
 		font-size: 10px;
 		line-height: 12px;
 	}
+	.supports-list{
+		margin-left: 12px;
+		margin-bottom: 12px;
+	}
+	.supports-list .supports-icon{
+		background-repeat: no-repeat;
+		background-size: 16px 16px;
+		width:16px;
+		height: 16px;
+		display: inline-block;
+		margin-right: 6px;
+		vertical-align: top;
+	}
 	@media (-webkit-min-device-pixel-ratio: 3){
-		.supports .supports-icon.decrease{
+		.supports .supports-icon.decrease,
+		.supports-list .supports-icon.decrease{
 			background-image:url(decrease_1@3x.png);
 		}
-		.supports .supports-icon.discount{
+		.supports .supports-icon.discount,
+		.supports-list .supports-icon.discount{
 			background-image:url(discount_1@3x.png);
 		}
-		.supports .supports-icon.special{
+		.supports .supports-icon.special,
+		.supports-list .supports-icon.special{
 			background-image:url(special_1@3x.png);
 		}
-		.supports .supports-icon.invoice{
+		.supports .supports-icon.invoice,
+		.supports-list .supports-icon.invoice{
 			background-image:url(invoice_1@3x.png);
 		}
-		.supports .supports-icon.guarantee{
+		.supports .supports-icon.guarantee,
+		.supports-list .supports-icon.guarantee{
 			background-image:url(guarantee_1@3x.png);
 		}
 	}
 	@media (-webkit-min-device-pixel-ratio: 2){
-		.supports .supports-icon.decrease{
+		.supports .supports-icon.decrease,
+		.supports-list .supports-icon.decrease{
 			background-image:url(decrease_1@2x.png);
 		}
-		.supports .supports-icon.discount{
+		.supports .supports-icon.discount,
+		.supports-list .supports-icon.discount{
 			background-image:url(discount_1@2x.png);
 		}
-		.supports .supports-icon.special{
+		.supports .supports-icon.special,
+		.supports-list .supports-icon.special{
 			background-image:url(special_1@2x.png);
 		}
-		.supports .supports-icon.invoice{
+		.supports .supports-icon.invoice,
+		.supports-list .supports-icon.invoice{
 			background-image:url(invoice_1@2x.png);
 		}
-		.supports .supports-icon.guarantee{
+		.supports .supports-icon.guarantee,
+		.supports-list .supports-icon.guarantee{
 			background-image:url(guarantee_1@2x.png);
 		}
 	}
@@ -217,10 +294,77 @@
 		position: fixed;
 		top:0;
 		left:0;
+		right:0;
+		bottom: 0;
 		width:100%;
 		height: 100%;
+		overflow-y: auto;
+		overflow-x:hidden; 
 		z-index: 1;
 		background-color: rgba(7,17,27,.8);
 		/*filter:blur(10px);*/
+	}
+	.detail-container{
+		min-height: 100%;
+		padding-top: 64px;
+		padding-bottom: 64px;
+	}
+	.detail-wrap{
+		
+	}
+	.detail-close{
+		margin-top:-64px;
+		height: 64px;
+	}
+	.detail-close i{
+		font-size: 32px;
+		width:32px;
+		height: 32px;
+		text-align: center;
+		display: block;
+		margin:0 auto;
+	}
+	.detail-title{
+		font-size: 16px;
+		font-weight: 700;
+		text-align: center;
+		height: 16px;
+		line-height: 16px;
+	}
+	.detail-content{
+		padding: 0 36px;
+	}
+	.content-title{
+		display: -webkit-box;
+		display: box;
+		-webkit-box-align: center;
+		box-align: center;
+		-webkit-box-pack: center;
+		box-pack: center;
+	}
+	.content-title .supports-text{
+		font-weight: 700;
+		font-size: 14px;
+		line-height: 14px;
+		padding: 0 12px;
+	}
+	.content-title .line{
+		display: block;
+		-webkit-box-flex: 1;
+		box-flex: 1;
+		height: 1px;
+		background-color: rgba(255,255,255,.2);
+	}
+	.supports-main,.bulletin-main{
+		font-size: 12px;
+		line-height: 12px;
+		margin:24px 0 28px ;
+	}
+	.bulletin-main{
+		line-height: 24px;
+	}
+	.supports-desc{
+		font-size: 12px;
+		line-height: 12px;
 	}
 </style>
