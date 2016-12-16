@@ -28,7 +28,7 @@
 		<div class="header-bg">
 			<img :src="seller.avatar" width="100%" alt="">
 		</div>
-		<div class="detail" v-show="showDetailFlag">
+		<div class="detail" v-show="showDetailFlag" transition="fade">
 			<div class="detail-container">
 				<div class="detail-wrap">
 					<div class="detail-title">
@@ -41,14 +41,14 @@
 							<h2 class="supports-text">优惠信息</h2>	
 							<span class="line"></span>
 						</div>
-						<div class="supports-main">
+						<div class="supports-main" v-if="seller.supports">
 							<div v-for="supportItem in seller.supports" class="supports-list">
 								<span class="supports-icon iconfont" :class="classMap[supportItem.type]"></span>
 								<span class="supports-desc">{{supportItem.description}}</span>
 							</div>
 						</div>
 					</div>
-					<div class="detail-content">
+					<div class="detail-content" v-if="seller.bulletin">
 						<div class="content-title">
 							<span class="line"></span>
 							<h2 class="supports-text">商家公告</h2>	
@@ -179,7 +179,6 @@
 		line-height: 12px;
 	}
 	.supports-list{
-		margin-left: 12px;
 		margin-bottom: 12px;
 	}
 	.supports-list .supports-icon{
@@ -303,6 +302,17 @@
 		z-index: 1;
 		background-color: rgba(7,17,27,.8);
 		/*filter:blur(10px);*/
+		transition:all .5s;
+		backdrop-filter: blur(10px);
+	}
+	.detail.fade-transition{
+		opacity: 1;
+		background-color: rgba(7,17,27,.8);
+	}
+	.detail.fade-enter,
+	.detail.fade-leave{
+		opacity: 0;
+		background-color: rgba(7,17,27,.0);
 	}
 	.detail-container{
 		min-height: 100%;
@@ -359,6 +369,7 @@
 		font-size: 12px;
 		line-height: 12px;
 		margin:24px 0 28px ;
+		padding: 0 12px;
 	}
 	.bulletin-main{
 		line-height: 24px;
