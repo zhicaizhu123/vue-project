@@ -38,74 +38,76 @@
 	</div>
 </template>
 <script>
-	import Bscroll from 'better-scroll';
-	const ERR_OK = 0;
-	export default {
-		// props: {
-		// 	seller: {
-		// 		type: Object
-		// 	}
-		// }
-		data: function () {
-			return {
-				goods: [],
-				listHeight: [],
-				scrollY: 0
-			};
-		},
-		computed: {
-			currentIndex: function () {
-				for (let i = 0; i < this.listHeight.length; i++) {
-					let height1 = this.listHeight[i];
-					let height2 = this.listHeight[i + 1];
-					if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
-						console.log(this.scrollY);
-						return i;
-					}
-				}
-				return 0;
-			}
-		},
-		created: function () {
-			this.classMap = ['decrease_3', 'discount_3', 'special_3', 'invoice_3', 'guarantee_3'];
-			this.$http.get('/api/goods').then((response) => {
-				response = response.body;
-				if (response.errno === ERR_OK) {
-					this.goods = response.data;
-					this.$nextTick(function () {
-						this._initScroll();
-						this._calculateHeight();
-					});
-				}
-			});
-		},
-		methods: {
-			_initScroll: function () {
-				let menuWrap = this.$els.menuWrap;
-				let goodsWrap = this.$els.goodsWrap;
-				this.menuScroll = new Bscroll(menuWrap, {
-					click: true
-				});
-				this.goodsScroll = new Bscroll(goodsWrap, {
-					click: true,
-					probeType: 3
-				});
-				this.goodsScroll.on('scroll', function (pos) {
-					this.scrollY = Math.abs(Math.round(pos.y));
-				});
-			},
-			_calculateHeight: function () {
-				let listHook = this.$els.goodsWrap.getElementsByClassName('wrap-list-hook');
-				let listLen = listHook.length;
-				let height = 0;
-				this.listHeight.push(height);
-				for (let h = 0; h < listLen; h++) {
-					height += listHook[h].clientHeight;
-					this.listHeight.push(height);
-				}
-			}
-		}
-	};
+	import BScroll from 'better-scroll';
+
+  const ERR_OK = 0;
+
+  export default {
+    props: {
+      seller: {
+        type: Object
+      }
+    },
+    data() {
+      return {
+        goods: [],
+        listHeight: [],
+        scrollY: 0
+      };
+    },
+    computed: {
+      currentIndex() {
+        for (let i = 0; i < this.listHeight.length; i++) {
+          let height1 = this.listHeight[i];
+          let height2 = this.listHeight[i + 1];
+          if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+            return i;
+          }
+        }
+        return 0;
+      }
+    },
+    created() {
+      this.classMap = ['decrease_3', 'discount_3', 'special_3', 'invoice_3', 'guarantee_3'];
+
+      this.$http.get('/api/goods').then((response) => {
+        response = response.body;
+        if (response.errno === ERR_OK) {
+          this.goods = response.data;
+          this.$nextTick(() => {
+            this._initScroll();
+            this._calculateHeight();
+          });
+        }
+      });
+    },
+    methods: {
+      _initScroll() {
+        this.meunScroll = new BScroll(this.$els.menuWrap, {
+          click: true
+        });
+
+        this.goodsScroll = new BScroll(this.$els.goodsWrap, {
+          click: true,
+          probeType: 3
+        });
+
+        this.goodsScroll.on('scroll', (pos) => {
+          this.scrollY = Math.abs(Math.round(pos.y));
+        });
+      },
+      _calculateHeight() {
+        let wrapList = this.$els.goodsWrap.getElementsByClassName('wrap-list-hook');
+        let height = 0;
+        this.listHeight.push(height);
+        for (let i = 0; i < wrapList.length; i++) {
+          let item = wrapList[i];
+          height += item.clientHeight;
+          this.listHeight.push(height);
+        }
+      }
+    }
+  };
 </script>
 <style>
 	.good-container{
@@ -126,9 +128,16 @@
 		display:table;
 		font-size: 12px;
 		position: relative;
-		margin:0 12px;
+		padding:0 12px;
  	}
- 	.menu-wrap .menu-list:after,
+ 	.menu-wrap .menu-list.current{
+ 		background-color: #fff;
+ 		margin-top: -1px;
+ 	}
+ 	.menu-wrap .menu-list.current .text{
+ 		border:none;
+ 	}
+ 	.menu-wrap .menu-list .text:after,
  	.food-item:after{
 	    position: absolute;
 	    display: block;
@@ -138,18 +147,18 @@
 	    content: ' ';
 	    border:1px solid rgba(7,17,27,.1);
 	}
-	.menu-list:last-child:after{
+	.menu-list:last-child .text:after{
 		border:0;
 	}
 	@media (-webkit-min-device-pixel-ratio: 1.5){
-	    .menu-wrap .menu-list:after,
+	    .menu-wrap .menu-list .text:after,
 	    .food-item:after{
 	      	-webkit-transform: scaleY(.7);
 	      	transform: scaleY(.7);
 	    }
 	}
 	@media (-webkit-min-device-pixel-ratio: 2){
-	    .menu-wrap .menu-list:after,
+	    .menu-wrap .menu-list .text:after,
 	    .food-item:after{
 	      	-webkit-transform: scaleY(.5);
 	      	transform: scaleY(.5);
@@ -160,6 +169,7 @@
  		vertical-align: middle;
  		line-height: 14px;
  		width:56px;
+ 		position: relative;
  	}
 	.goods-wrap{
 		flex: 1;
