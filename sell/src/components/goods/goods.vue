@@ -2,7 +2,7 @@
 	<div class="good-container">
 		<div class="menu-wrap" v-el:menu-wrap>
 			<ul>
-				<li v-for="item in goods" class="menu-list" :class="{'current':currentIndex===$index}">
+				<li v-for="item in goods" class="menu-list" :class="{'current':currentIndex===$index}" @click="selectMenu($index)">
 					<span class="text"><span class="supports-icon" v-show="item.type > 0" :class="classMap[item.type]"></span><span class="list-name">{{item.name}}</span></span>
 				</li>
 			</ul>
@@ -30,15 +30,16 @@
 							</div>
 							
 						</li>
-					</li>
-				</div>
+					</ul>
+				</li>
 			</ul>
-			
 		</div>
+		<shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
 	</div>
 </template>
 <script>
 	import BScroll from 'better-scroll';
+	import shopcart from 'components/shopcart/shopcart.vue';
 
   const ERR_OK = 0;
 
@@ -105,7 +106,15 @@
           height += item.clientHeight;
           this.listHeight.push(height);
         }
+      },
+      selectMenu(index) {
+        let wrapList = this.$els.goodsWrap.getElementsByClassName('wrap-list-hook');
+        let el = wrapList[index];
+        this.goodsScroll.scrollToElement(el, 300);
       }
+    },
+    components: {
+        shopcart
     }
   };
 </script>
@@ -133,6 +142,7 @@
  	.menu-wrap .menu-list.current{
  		background-color: #fff;
  		margin-top: -1px;
+ 		z-index: 10;
  	}
  	.menu-wrap .menu-list.current .text{
  		border:none;
