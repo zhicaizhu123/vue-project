@@ -8,7 +8,7 @@
 					</div>
 					<div class="total-num" v-if="totalCount>0">{{totalCount}}</div>
 				</div>
-				<div class="price":class="{'highlight': totalPrice > 0}">
+				<div class="shopcart-price":class="{'highlight': totalPrice > 0}">
 					￥{{totalPrice}}
 				</div>
 				<div class="deliveryPrice">
@@ -35,12 +35,7 @@
 			selectFoods: {
 				type: Array,
 				default() {
-					return [
-						{
-							price: 12,
-							count: 2
-						}
-					];
+					return [];
 				}
 			}
 		},
@@ -102,7 +97,7 @@
 		flex:0 0 105px;
 		width:105px;
 	}
-	.logo-container,.price,.deliveryPrice{
+	.logo-container,.shopcart-price,.deliveryPrice{
 		display: inline-block
 	}
 	.logo-container{
@@ -113,8 +108,8 @@
 		background-color:#141d27;
 		box-sizing:border-box;
 		margin-top: -8px;
-		margin-left:8px;
-		margin-right:8px;
+		margin-left:6px;
+		margin-right:6px;
 		/*overflow: hidden;*/
 		position: relative;
 	}
@@ -147,7 +142,7 @@
 		font-size: 24px;
 		line-height: 44px;
 	}
-	.price{
+	.shopcart-price{
 		vertical-align: top;
 		margin-top:13px;
 		height:25px;
@@ -157,13 +152,13 @@
 		padding-right:8px;
 		border-right: 1px solid rgba(255,255,255,.1);
 	}
-	.price.highlight{
+	.shopcart-price.highlight{
 		color:#fff;
 	}
 	.deliveryPrice{
 		padding:0 8px;
 		vertical-align: top;
-		font-size: 14px;
+		font-size: 12px;
 		height:50px;
 		line-height: 50px
 	}

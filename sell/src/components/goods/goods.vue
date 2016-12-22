@@ -27,6 +27,9 @@
 								<div class="price">
 									<span class="cur-price">￥<span class="price-large">{{foodItem.price}}</span></span><span v-show="foodItem.oldPrice" class="old-price">￥{{foodItem.oldPrice}}</span>
 								</div>
+								<div class="cartcontrol-container">
+									<cartcontrol :food="foodItem"></cartcontrol>
+								</div>
 							</div>
 							
 						</li>
@@ -34,12 +37,13 @@
 				</li>
 			</ul>
 		</div>
-		<shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+		<shopcart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
 	</div>
 </template>
 <script>
 	import BScroll from 'better-scroll';
 	import shopcart from 'components/shopcart/shopcart.vue';
+	import cartcontrol from 'components/cartcontrol/cartcontrol.vue';
 
   const ERR_OK = 0;
 
@@ -66,6 +70,17 @@
           }
         }
         return 0;
+      },
+      selectFoods() {
+		let foods = [];
+		this.goods.forEach((good) => {
+			good.foods.forEach((food) => {
+				if (food.count) {
+					foods.push(food);
+				}
+            });
+        });
+        return foods;
       }
     },
     created() {
@@ -114,7 +129,8 @@
       }
     },
     components: {
-        shopcart
+        shopcart,
+        cartcontrol
     }
   };
 </script>
@@ -141,10 +157,15 @@
  	}
  	.menu-wrap .menu-list.current{
  		background-color: #fff;
- 		margin-top: -1px;
+ 		margin-top: -2px;
  		z-index: 10;
  	}
  	.menu-wrap .menu-list.current .text{
+ 		background-color: #fff;
+ 		margin-top: -1px;
+ 		z-index: 10;
+ 	}
+ 	.menu-wrap .menu-list.current .text:after{
  		border:none;
  	}
  	.menu-wrap .menu-list .text:after,
@@ -158,7 +179,7 @@
 	    border:1px solid rgba(7,17,27,.1);
 	}
 	.menu-list:last-child .text:after{
-		border:0;
+		border:none;
 	}
 	@media (-webkit-min-device-pixel-ratio: 1.5){
 	    .menu-wrap .menu-list .text:after,
@@ -297,5 +318,10 @@
 		text-decoration: line-through;
 		color:rgb(147,153,159);
 		font-weight: 700;
+	}
+	.cartcontrol-container{
+		position: absolute;
+		bottom:18px;
+		right:0;
 	}
 </style>
