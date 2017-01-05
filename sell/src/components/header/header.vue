@@ -299,10 +299,10 @@
 		height: 100%;
 		overflow-y: auto;
 		overflow-x:hidden; 
-		z-index: 1;
+		z-index: 100;
 		background-color: rgba(7,17,27,.8);
 		/*filter:blur(10px);*/
-		transition:all .5s;
+		transition:all .5s linear;
 		backdrop-filter: blur(10px);
 	}
 	.detail.fade-transition{

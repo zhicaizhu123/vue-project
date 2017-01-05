@@ -275,7 +275,7 @@
 		position: relative;
 	}
 	.wrap-list .food-item:last-child{
-		padding-bottom: 0;
+		margin-bottom: 0;
 	}
 	.wrap-list .food-item:last-child:after{
 		border:0;
