@@ -24,4 +24,4 @@ router.map({
 });
 // 启动路由,挂在到id=app的元素上面
 router.start(app, '#app');
-router.go('/goods');// 默认的展示模块
+// router.go('/goods');// 默认的展示模块

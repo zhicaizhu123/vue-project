@@ -44,7 +44,7 @@
 <style>
 	.score-container{
 		text-align: center;
-		padding:18px 0 28px 0;
+/*		padding:18px 0 28px 0;*/
 	}
 	.score-container .score{
 		display: inline-block;

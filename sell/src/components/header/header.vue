@@ -378,4 +378,7 @@
 		font-size: 12px;
 		line-height: 12px;
 	}
+	.score-container{
+		padding:18px 0 28px 0;
+	}
 </style>
