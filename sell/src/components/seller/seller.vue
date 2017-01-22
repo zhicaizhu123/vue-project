@@ -36,6 +36,10 @@
 						</div>
 					</div>
 				</div>
+				<div class="collect-seller" @click="favoriteCallback($event)">
+					<i class="iconfont icon-favorite" :class="favorite ? 'favorite' :''"></i>
+					<span>{{favoritetext}}</span>
+				</div>
 			</div>
 			<divider></divider>
 			<div class="block">
@@ -66,11 +70,22 @@
 				</div>
 			</div>
 			<divider></divider>
+			<div class="block">
+				<h2 class="block-title">
+					商家信息
+				</h2>
+				<div class="seller-infos" v-if="seller.infos">
+					<div v-for="info in seller.infos" class="infos-list">
+						{{info}}
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 <script>
 	import BScroll from 'better-scroll';
+	import {saveToLocal, loadFromLocal} from 'common/js/localData.js';
 	import score from 'components/score/score.vue';
 	import divider from 'components/divider/divider.vue';
 	export default {
@@ -81,8 +96,15 @@
 		},
 		data() {
 			return {
-
+				favorite: (() => {
+					return loadFromLocal(this.seller.id, 'favorite');
+				})()
 			};
+		},
+		computed: {
+			favoritetext() {
+				return this.favorite ? '已收藏' : '收藏';
+			}
 		},
 		created: function () {
 			this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
@@ -129,6 +151,13 @@
 						}
 					});
 				}
+			},
+			favoriteCallback(event) {
+				if (!event._constructed) {
+					return;
+				}
+				this.favorite = !this.favorite;
+				saveToLocal(this.seller.id, 'favorite', this.favorite);
 			}
 		},
 		components: {
@@ -148,6 +177,7 @@
 	}
 	.block{
 		padding:0 18px;
+		position: relative;
 	}
 	.block .seller-title,
 	.block .seller-data{
@@ -163,13 +193,15 @@
 		border-bottom:1px solid rgba(7,17,27,.1);
 	}
 	@media (-webkit-min-device-pixel-ratio: 1.5){
-	    .block .seller-title:after{
+	    .block .seller-title:after,
+	    .infos-list:after:after{
 	      	-webkit-transform: scaleY(.7);
 	      	transform: scaleY(.7);
 	    }
 	}
 	@media (-webkit-min-device-pixel-ratio: 2){
-	    .block .seller-title:after{
+	    .block .seller-title:after,
+	    .infos-list:after:after{
 	      	-webkit-transform: scaleY(.5);
 	      	transform: scaleY(.5);
 	    }
@@ -222,6 +254,27 @@
 	.seller-data .data-text .data-num{
 		font-size: 24px;
 		line-height: 24px;
+	}
+	.collect-seller{
+		position: absolute;
+		right: 10px;
+		top:18px;
+		width:48px;
+		text-align: center;
+	}
+	.collect-seller span{
+		display: block;
+		font-size: 10px;
+		margin-top: 4px;
+		color:rgb(77,85,93);
+	}
+	.icon-favorite{
+		font-size: 24px;
+		line-height: 24px;
+		color:rgb(147,153,159);
+	}
+	.icon-favorite.favorite{
+		color:rgb(240,20,20);
 	}
 	.block-title{
 		padding-top: 18px;
@@ -341,5 +394,22 @@
 	.seller-pics img{
 		width:120px;
 		height: 90px;
+	}
+	.seller-infos{
+		margin-top: 12px;
+	}
+	.infos-list{
+		padding:16px 12px;
+		position: relative;
+		font-size: 12px;
+		line-height: 16px;
+	}
+	.infos-list:after{
+		content:"";
+		top:0;
+		left: 0;
+		width:100%;
+		position: absolute;
+		border-bottom:1px solid rgba(7,17,27,.1);
 	}
 </style>
