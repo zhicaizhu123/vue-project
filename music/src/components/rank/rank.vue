@@ -1,7 +1,7 @@
 <template>
 	<div class="rank-wrap">
 		<ul class="rank-list">
-			<li class="rank-item" v-for="item in toplist">
+			<li class="rank-item" v-for="item in toplist" @click="getID(item.id)">
 				<div class="rank-img">
 					<img :src="item.picUrl" alt="">
 					<span class="listen-num">
@@ -17,11 +17,12 @@
 					</p>
 				</div>
 			</li>
-		</ul>
+		</ul>	
 	</div>
 </template>
 <script>
 	import BScroll from 'better-scroll';
+	import {mapMutations} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -47,12 +48,23 @@
 				console.log(this.toplist[0]);
 				this.$nextTick(() => {
 					if (!this.rankScroll) {
-						this.rankScroll = new BScroll(document.getElementsByClassName('rank-wrap')[0]);
+						this.rankScroll = new BScroll(document.getElementsByClassName('rank-wrap')[0], {
+							click: true
+						});
 					} else {
 						this.rankScroll.refresh();
 					}
 				});
 			});
+		},
+		methods: {
+			...mapMutations([
+				'setID'
+			]),
+			getID(id) {
+				this.setID(id);
+				this.$parent.rankPageShow = true;
+			}
 		},
 		filters: {
 			wan(val) {
@@ -79,6 +91,9 @@
 		display: flex;
 		overflow: hidden;
 		background-color: #fff;
+	}
+	.rank-item:last-child{
+		margin-bottom: 0;
 	}
 	.rank-item .rank-img{
 		position: relative;
