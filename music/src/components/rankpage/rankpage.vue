@@ -47,7 +47,7 @@
           			<img src="../../assets/icon-back-white.svg" v-if="isDark">
 				</div>
 				<div class="back-text">
-					排行榜{{rankid}}
+					排行榜
 				</div>
 			</div>
 		</div>
@@ -188,10 +188,11 @@
 		left:0;
 		top:0;
 		z-index: 2;
+		width:100%;
 	}
 	.header-title{
 		height: 25px;
-		margin:12.5px;
+		padding:12.5px;
 		line-height: 25px;
 	}
 	.header-title .back-icon{

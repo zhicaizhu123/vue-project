@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <search></search>
-    <rank></rank>
+    <search @showSearchCancel="rankshow = false" @hideSearchCancel="rankshow = true"></search>
+    <rank v-if="rankshow"></rank>
     <transition name="rank-page-slide">
       <rankpage v-if="rankPageShow"></rankpage>
     </transition>
@@ -10,7 +10,7 @@
       <div class="bar-img">
         <img :src="coverImgUrl" alt="">
       </div>
-      <span class="song-name">{{song.name}}</span>
+      <span class="song-name2">{{song.name}}</span>
       <img class="control" :src="playing?iconPause:iconPlay" alt="" @click.stop="controlMusic">
     </div>
     <transition name="play-slide">
@@ -41,7 +41,8 @@
         iconPause,
         iconPlay,
         playPageShow: false,
-        rankPageShow: false
+        rankPageShow: false,
+        rankshow: true
       };
     },
     computed: {
@@ -103,7 +104,7 @@
     height: 100%;
     border-radius: 4px;
   }
-  .song-name{
+  .song-name2{
     display: block;
     flex:1;
     padding-left:10px;

@@ -1,5 +1,8 @@
 <template>
 	<div class="play-page">
+		<transition name="playlist-slide">
+			<playlist v-if="playingListShow"></playlist>
+		</transition>
 		<div class="album" @click="hidePlayPage">
 			<div class="play-page-hide">
 				<img src="../../assets/icon-jiantou.png" alt="">
@@ -12,23 +15,23 @@
 			</div>
 			<div class="music-info">
 				<p class="song-name">{{song.name}}</p>
-				<p class="song-singer">{{song.singer}}</p>
+				<p class="song-singer">{{song.singer | singer}}</p>
 			</div>
 			<div class="music-control">
 				<ul>
 					<li>
 						<img src="../../assets/icon-like.png" alt="">
 					</li>
-					<li>
+					<li @click="playFront">
 						<img src="../../assets/icon-shangyiqu.png" alt="">
 					</li>
-					<li>
-						<img :src="playing?$parent.iconPause:$parent.iconPlay" @click="$parent.controlMusic" alt="">
+					<li @click="$parent.controlMusic">
+						<img :src="playing?$parent.iconPause:$parent.iconPlay" alt="">
 					</li>
-					<li>
+					<li @click="playNext">
 						<img src="../../assets/icon-xiayiqu.png" alt="">
 					</li>
-					<li>
+					<li @click="showPlayListPage">
 						<img src="../../assets/icon-list.png" alt="">
 					</li>
 				</ul>
@@ -64,11 +67,12 @@
 	</div>
 </template>
 <script>
-	import {mapState} from 'vuex';
+	import {mapState, mapMutations} from 'vuex';
+	import playlist from '../playlist/playlist';
 	export default {
 		data() {
 			return {
-				
+				playingListShow: false
 			};
 		},
 		computed: {
@@ -77,9 +81,31 @@
 			])
 		},
 		methods: {
+			...mapMutations([
+				'playNext', 'playFront'
+			]),
 			hidePlayPage() {
 				this.$parent.playPageShow = false;
+			},
+			showPlayListPage() {
+				this.playingListShow = true;
 			}
+		},
+		filters: {
+			singer(val) {
+				if (typeof val === 'string') {
+					return val;
+				} else if (val instanceof Array) {
+					var str = '';
+					val.forEach((item) => {
+						str = str + item.name + ' ';
+					});
+					return str;
+				}
+			}
+		},
+		components: {
+			playlist
 		}
 	};
 </script>
@@ -212,5 +238,11 @@
 		position: absolute;
 		left:20%;
 		top:-6.5px;
+	}
+	.playlist-slide-enter-active,.playlist-slide-leave-active{
+		transition:all .3s;
+	}
+	.playlist-slide-enter,.playlist-slide-leave-active{
+		transform:translateY(100%);
 	}
 </style>

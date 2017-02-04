@@ -39,6 +39,18 @@ const store = new Vuex.Store({
 		pause(state) {
 			state.playing = false;
 		},
+		playIndex (state, index) { 
+			state.index = index;
+			state.song = state.playList[index];
+		},
+		playFront (state) { // 上一首
+			state.index = (state.index - 1 + state.playList.length) % state.playList.length;
+			state.song = state.playList[state.index];
+		},
+		playNext (state) { // 下一首
+			state.index = (state.index + 1) % state.playList.length;
+			state.song = state.playList[state.index];
+		},
 		playContinue(state) {
 			switch (state.playMode) {
 				case SINGLE:
@@ -57,6 +69,9 @@ const store = new Vuex.Store({
 			state.playList = playList.list;
 			state.index = playList.index;
 			state.song = state.playList[state.index];
+		},
+		addToPlayList (state, item) { // 添加歌曲到播放列表
+			state.playList.push(item);
 		}
 	}
 });
