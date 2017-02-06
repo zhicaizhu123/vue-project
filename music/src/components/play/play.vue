@@ -19,8 +19,8 @@
 			</div>
 			<div class="music-control">
 				<ul>
-					<li>
-						<img src="../../assets/icon-like.png" alt="">
+					<li @click="setLike">
+						<img :src="isLike ? likeActive : noLike" alt="">
 					</li>
 					<li @click="playFront">
 						<img src="../../assets/icon-shangyiqu.png" alt="">
@@ -53,13 +53,13 @@
 			<div class="other-button">
 				<ul>
 					<li>
-						<img src="../../assets/icon-share.png">
+						<img src="../../assets/icon-share.png" @click="changePlayMode(0)">
 					</li>
 			        <li>
-			        	<img src="../../assets/icon-suiji.png">
+			        	<img src="../../assets/icon-danqu.png" @click="changePlayMode(2)">
 			        </li>
 			        <li>
-			        	<img src="../../assets/icon-xunhuan.png">
+			        	<img src="../../assets/icon-xunhuan.png" @click="changePlayMode(1)">
 			        </li>
 				</ul>
 			</div>
@@ -68,11 +68,20 @@
 </template>
 <script>
 	import {mapState, mapMutations} from 'vuex';
+	import {getLocalStorage, setLocalStorage} from '../../common/js/store';
 	import playlist from '../playlist/playlist';
+	import noLike from 'assets/icon-like.png';
+	import likeActive from 'assets/icon-like-active.png';
 	export default {
+		props: ['songid'],
 		data() {
 			return {
-				playingListShow: false
+				playingListShow: false,
+				noLike,
+				likeActive,
+				isLike: (() => {
+					return getLocalStorage(this.songid, 'like');
+				})()
 			};
 		},
 		computed: {
@@ -80,15 +89,28 @@
 				'coverImgUrl', 'song', 'playing'
 			])
 		},
+		watch: {
+			song: function(val, old) {
+				if (val.id !== old.id) {
+					this.isLike = (() => {
+						return getLocalStorage(val.id, 'like');
+					})();
+				}
+			}
+		},
 		methods: {
 			...mapMutations([
-				'playNext', 'playFront'
+				'playNext', 'playFront', 'changePlayMode'
 			]),
 			hidePlayPage() {
 				this.$parent.playPageShow = false;
 			},
 			showPlayListPage() {
 				this.playingListShow = true;
+			},
+			setLike() {
+				this.isLike = !this.isLike;
+				setLocalStorage(this.song.id, 'like', this.isLike);
 			}
 		},
 		filters: {
@@ -239,10 +261,10 @@
 		left:20%;
 		top:-6.5px;
 	}
-	.playlist-slide-enter-active,.playlist-slide-leave-active{
-		transition:all .3s;
+	.playlist-slide-enter-active, .playlist-slide-leave-active {
+	    transition: all .3s linear;
 	}
-	.playlist-slide-enter,.playlist-slide-leave-active{
-		transform:translateY(100%);
+	.playlist-slide-enter, .playlist-slide-leave-active {
+	    transform:translateY(100%);
 	}
 </style>

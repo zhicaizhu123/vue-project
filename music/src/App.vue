@@ -6,7 +6,7 @@
       <rankpage v-if="rankPageShow"></rankpage>
     </transition>
     <div class="play-bar" @click="showPlayPage">
-      <audio id="music" :src="dataUrl" autoplay></audio>
+      <audio id="music" :src="dataUrl" autoplay @ended="playContinue" :loop="loop"></audio>
       <div class="bar-img">
         <img :src="coverImgUrl" alt="">
       </div>
@@ -14,7 +14,7 @@
       <img class="control" :src="playing?iconPause:iconPlay" alt="" @click.stop="controlMusic">
     </div>
     <transition name="play-slide">
-      <play v-if="playPageShow"></play>
+      <play v-if="playPageShow" :songid="song.id"></play>
     </transition>
     
   </div>
@@ -52,12 +52,19 @@
         }
       }),
       ...mapState([
-        'playing', 'song', 'coverImgUrl', 'rankid'
-      ])
+        'playing', 'song', 'coverImgUrl', 'rankid', 'playMode', 'playList'
+      ]),
+      loop() {
+        if (this.playMode === 0 || this.playList.length === 1) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     },
     methods: {
       ...mapMutations(
-        ['play', 'pause']
+        ['play', 'pause', 'playContinue']
       ),
       controlMusic() {
         this.playing ? this.pause() : this.play();

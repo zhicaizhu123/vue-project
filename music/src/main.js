@@ -15,7 +15,7 @@ const store = new Vuex.Store({
 		playing: true,
 		currentTime: 0,
 		duration: 0,
-		playMode: SINGLE,
+		playMode: SEQUENTIAL,
 		index: 0,
 		coverImgUrl: 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003RMaRI1iFoYd.jpg?max_age=2592000',
 		song: {
@@ -43,6 +43,9 @@ const store = new Vuex.Store({
 			state.index = index;
 			state.song = state.playList[index];
 		},
+		setIndex (state) {
+			state.index = state.index - 1;
+		},
 		playFront (state) { // 上一首
 			state.index = (state.index - 1 + state.playList.length) % state.playList.length;
 			state.song = state.playList[state.index];
@@ -57,21 +60,47 @@ const store = new Vuex.Store({
 					state.playing = true;
 					break;
 				case SEQUENTIAL:
+					state.index = (state.index + 1) % state.playList.length;
+					state.song = state.playList[state.index];
 					break;
 				case RANDOM: 
+					state.index = Math.floor(Math.random() * state.playList.length);
+					state.song = state.playList[state.index];
 					break;
 			}
+		},
+		changePlayMode(state, num) {
+			switch (num) {
+				case SINGLE:
+					state.playMode = SINGLE;
+					break;
+				case SEQUENTIAL:
+					state.playMode = SEQUENTIAL;
+					break;
+				case RANDOM:
+					state.playMode = RANDOM;
+					break;
+			}
+		},
+		changeCoverImgUrl(state, url) {
+			state.coverImgUrl = url;
 		},
 		setID(state, id) {
 			state.rankid = id;
 		},
-		setPlayList (state, playList) { // 获取新的歌曲列表
+		setPlayList(state, playList) { // 获取新的歌曲列表
 			state.playList = playList.list;
 			state.index = playList.index;
 			state.song = state.playList[state.index];
 		},
-		addToPlayList (state, item) { // 添加歌曲到播放列表
+		addToPlayList(state, item) { // 添加歌曲到播放列表
 			state.playList.push(item);
+		},
+		deleteFromPlayList(state, num) {
+			state.playList.splice(num, 1);
+		},
+		addOneToPlayList(state, obj) {
+			state.playList.push(obj);
 		}
 	}
 });

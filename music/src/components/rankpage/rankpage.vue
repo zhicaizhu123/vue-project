@@ -1,5 +1,7 @@
 <template>
-	<div id="rankpage" class="rank-page">
+	<div id="rankpage" class="rank-page" v-cloak>
+		<action v-if="actionShow" :action-index="actionIndex" :parent-page="'rankPage'" :song-list="songlist"></action>
+		
 		<div class="rank-page-content">
 			<div id="singer-header" class="singer-header" v-if="topListData!=null">
 				<div class="header-blank">
@@ -30,7 +32,7 @@
 	          					<span>{{item.data.albumname}}</span>
 							</div>
 						</div>
-						<div class="more-icon">
+						<div class="more-icon" @click="showAction(index)">
 							<img src="../../assets/icon-...black.png" alt="">
 						</div>
 					</li>
@@ -38,7 +40,7 @@
 			</div>
 		</div>
 		<div class="singer-photo">
-	      <img :src="imgurl" alt="singerphoto">
+	      <img :src="imgurl" alt="">
 	    </div>
 		<div class="header-bar" :style="{background:background}" :class="{dark:isDark}">
 			<div class="header-title" @click="back">
@@ -56,11 +58,15 @@
 <script>
 	import BScroll from 'better-scroll';
 	import {mapState} from 'vuex';
+	import action from '../action/action';
 	export default {
 		data() {
 			return {
 				topListData: null,
-				opacity: 0
+				opacity: 0,
+				actionShow: false,
+				actionIndex: 0,
+				songlist: {}
 			};
 		},
 		computed: {
@@ -119,6 +125,13 @@
 					list: list
 				});
 				this.$store.commit('play');
+			},
+			showAction(num) {
+				this.actionIndex = num;
+				this.songlist = this.topListData.songlist[num].data;
+				this.$nextTick(() => {
+					this.actionShow = true;
+				});
 			}
 		},
 		created: function () {
@@ -157,10 +170,16 @@
 			wan(val) {
 				return Math.round(val / 1000) / 10 + '万';
 			}
+		},
+		components: {
+			action
 		}
 	};
 </script>
 <style>
+	[v-cloak] {
+  		display: none;
+	}
 	.rank-page{
 		position: absolute;
 		left:0;
@@ -272,5 +291,4 @@
 	.dark {
 	    color: #fff !important;
 	}
-
 </style>

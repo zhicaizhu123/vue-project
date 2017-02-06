@@ -1,8 +1,9 @@
 <template>
 	<div class="play-list-container">
+		<action v-if="actionShow" :action-index="actionIndex" :parent-page="'listPage'"></action>
 		<div class="play-list-header">
-			<img src="../../assets/icon-xunhuan.png" alt="">
-			<div class="play-mode">顺序播放 {{playList.length}}首歌曲</div>
+			<img :src="modeIcon" alt="">
+			<div class="play-mode">{{modeText}}播放 {{playList.length}}首歌曲</div>
 			<div class="finish" @click="finish">完成</div>
 		</div>
 		<div id="playlistWrap" class="play-list-wrap">
@@ -16,7 +17,7 @@
 								</div>
 								<img class="music-playing" src="../../assets/icon-playing.svg" alt="正在播放" v-show="index==num">
 							</div>
-							<div class="action-button">
+							<div class="action-button" @click="showAction(num)">
 								<img src="../../assets/icon-...black.png" alt="">
 							</div>
 						</li>
@@ -29,16 +30,39 @@
 <script>
 	import {mapState} from 'vuex';
 	import BScroll from 'better-scroll';
+	import single from 'assets/icon-share.png';
+	import suiji from 'assets/icon-danqu.png';
+	import xunhuan from 'assets/icon-xunhuan.png';
+	import action from '../action/action';
 	export default {
 		data() {
 			return {
-
+				actionShow: false,
+				actionIndex: 0
 			};
 		},
 		computed: {
 			...mapState([
-				'playList', 'index'
-			])
+				'playList', 'index', 'playMode'
+			]),
+			modeIcon() {
+				if (this.playMode === 0) {
+					return single;
+				} else if (this.playMode === 1) {
+					return xunhuan;
+				} else if (this.playMode === 2) {
+					return suiji;
+				}
+			},
+			modeText() {
+				if (this.playMode === 0) {
+					return '单曲';
+				} else if (this.playMode === 1) {
+					return '顺序';
+				} else if (this.playMode === 2) {
+					return '随机';
+				}
+			}
 		},
 		methods: {
 			finish() {
@@ -46,6 +70,12 @@
 			},
 			play: function (index) {
 				this.$store.commit('playIndex', index);
+			},
+			showAction(num) {
+				this.actionIndex = num;
+				this.$nextTick(() => {
+					this.actionShow = true;
+				});
 			}
 		},
 		mounted() {
@@ -69,6 +99,9 @@
 					return singer;
 				}
 			}
+		},
+		components: {
+			action
 		}
 	};
 </script>
