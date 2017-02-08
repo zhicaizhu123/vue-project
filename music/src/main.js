@@ -99,8 +99,19 @@ const store = new Vuex.Store({
 		deleteFromPlayList(state, num) {
 			state.playList.splice(num, 1);
 		},
-		addOneToPlayList(state, obj) {
-			state.playList.push(obj);
+		updateCurrentTime (state, time) {
+			state.currentTime = time;
+		},
+		updateDuration (state, time) {
+			state.duration = time;
+		}
+	},
+	getters: { // 需要复用这段代码
+		currentTime: state => {
+			return parseInt(state.currentTime / 60) + ':' + (Array(2).join(0) + (state.currentTime % 60)).slice(-2);
+		},
+		duration: state => {
+			return parseInt(state.duration / 60) + ':' + (Array(2).join(0) + (state.duration % 60)).slice(-2);
 		}
 	}
 });

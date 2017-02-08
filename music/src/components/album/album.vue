@@ -1,5 +1,8 @@
 <template>
 	<div class="album-main">
+		<transition name="action-animation">
+			<action v-if="actionShow" :parent-page="'rankPage'" :song-list="songList"></action>
+		</transition>
 		<div class="header-bar">
 			<div class="header-title" @click="back">
 				<div class="back-icon">
@@ -44,7 +47,7 @@
 	                				<span>{{song.albumdesc}}</span>
 								</div>
 							</div>
-							<div class="action-button">
+							<div class="action-button" @click="showAction(index)">
 								<img src="../../assets/icon-...black.png" alt="">
 							</div>
 						</li>
@@ -56,11 +59,14 @@
 </template>
 <script>
 	import BScroll from 'better-scroll';
+	import action from '../action/action';
 	export default {
 		props: ['mid'],
 		data() {
 			return {
-				album: null
+				album: null,
+				actionShow: false,
+				songList: {}
 			};
 		},
 		computed: {
@@ -117,7 +123,24 @@
 					list: list
 				});
 				this.$store.commit('play');
+			},
+			showAction(num) {
+				this.actionIndex = num;
+				let theSongList = this.album.list[num];
+				console.log(theSongList);
+				this.songList = {
+					songid: theSongList.songid,
+					songmid: theSongList.songmid,
+					songorig: theSongList.songorig,
+					singer: theSongList.singer
+				};
+				this.$nextTick(() => {
+					this.actionShow = true;
+				});
 			}
+		},
+		components: {
+			action
 		}
 	};
 </script>
@@ -186,5 +209,13 @@
 	.music-list-item .music-author{
 	    color: #8f8f8f;
 	    font-size: 12px;
+	}
+	.action-animation-enter-active,.action-animation-leave-active{
+		transition:all .3s;
+		opacity: 1;
+	}
+	.action-animation-enter,.action-animation-leave-active{
+		transform:translateY(100%);
+		opacity: 0;
 	}
 </style>

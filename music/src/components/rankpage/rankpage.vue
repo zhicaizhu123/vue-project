@@ -1,7 +1,8 @@
 <template>
-	<div id="rankpage" class="rank-page" v-cloak>
-		<action v-if="actionShow" :action-index="actionIndex" :parent-page="'rankPage'" :song-list="songlist"></action>
-		
+	<div id="rankpage" class="rank-page" :style="{background:color}" v-cloak>
+		<transition name="action-animation">
+			<action v-if="actionShow" :parent-page="'rankPage'" :song-list="songList"></action>
+		</transition>
 		<div class="rank-page-content">
 			<div id="singer-header" class="singer-header" v-if="topListData!=null">
 				<div class="header-blank">
@@ -33,7 +34,8 @@
 							</div>
 						</div>
 						<div class="more-icon" @click="showAction(index)">
-							<img src="../../assets/icon-...black.png" alt="">
+							<img v-if="!isDark" src="../../assets/icon-...black.png" alt="">
+							<img v-if="isDark" src="../../assets/icon-...white.png" alt="">
 						</div>
 					</li>
 				</ul>
@@ -66,7 +68,7 @@
 				opacity: 0,
 				actionShow: false,
 				actionIndex: 0,
-				songlist: {}
+				songList: {}
 			};
 		},
 		computed: {
@@ -128,7 +130,8 @@
 			},
 			showAction(num) {
 				this.actionIndex = num;
-				this.songlist = this.topListData.songlist[num].data;
+				this.songList = this.topListData.songlist[num].data;
+				console.log(this.songList);
 				this.$nextTick(() => {
 					this.actionShow = true;
 				});
@@ -158,11 +161,15 @@
 				this.$nextTick(() => {
 					if (!this.rankPageScroll) {
 						this.rankPageScroll = new BScroll(document.getElementById('rankpage'), {
-							click: true
+							click: true,
+							probeType: 3
 						});
 					} else {
 						this.rankPageScroll.refresh();
 					}
+					this.rankPageScroll.on('scroll', (pos) => {
+						this.opacity = Math.abs(-pos.y / (-pos.y + 200));
+					});
 				});
 			});
 		},
@@ -290,5 +297,13 @@
 	}
 	.dark {
 	    color: #fff !important;
+	}
+	.action-animation-enter-active,.action-animation-leave-active{
+		transition:all .3s;
+		opacity: 1;
+	}
+	.action-animation-enter,.action-animation-leave-active{
+		transform:translateY(100%);
+		opacity: 0;
 	}
 </style>

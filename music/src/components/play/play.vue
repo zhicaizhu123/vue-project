@@ -11,8 +11,15 @@
 		</div>
 		<div class="button-group">
 			<div class="progress-bar">
-				
-			</div>
+		        <div class="progress-bar-line">
+		          <div class="progress" v-bind:style="{width:indicatorPosition+'%'}"></div>
+		          <div class="indicator" v-bind:style="{left:indicatorPosition+'%'}" @touchmove.stop.prevent="changeProgress"></div>
+		        </div>
+		        <div class="time-indicator">
+					<span>{{currentTime}}</span>
+          			<span>{{duration}}</span>
+		        </div>
+	      	</div>
 			<div class="music-info">
 				<p class="song-name">{{song.name}}</p>
 				<p class="song-singer">{{song.singer | singer}}</p>
@@ -53,10 +60,10 @@
 			<div class="other-button">
 				<ul>
 					<li>
-						<img src="../../assets/icon-share.png" @click="changePlayMode(0)">
+						<img src="../../assets/icon-danqu.png" @click="changePlayMode(0)">
 					</li>
 			        <li>
-			        	<img src="../../assets/icon-danqu.png" @click="changePlayMode(2)">
+			        	<img src="../../assets/icon-suiji.png" @click="changePlayMode(2)">
 			        </li>
 			        <li>
 			        	<img src="../../assets/icon-xunhuan.png" @click="changePlayMode(1)">
@@ -67,7 +74,7 @@
 	</div>
 </template>
 <script>
-	import {mapState, mapMutations} from 'vuex';
+	import {mapState, mapMutations, mapGetters} from 'vuex';
 	import {getLocalStorage, setLocalStorage} from '../../common/js/store';
 	import playlist from '../playlist/playlist';
 	import noLike from 'assets/icon-like.png';
@@ -87,7 +94,15 @@
 		computed: {
 			...mapState([
 				'coverImgUrl', 'song', 'playing'
-			])
+			]),
+			...mapGetters([
+				'currentTime', 'duration'
+			]),
+			...mapState({
+				indicatorPosition (state) {
+					return state.currentTime / state.duration * 100;
+				}
+			})
 		},
 		watch: {
 			song: function(val, old) {
@@ -111,6 +126,9 @@
 			setLike() {
 				this.isLike = !this.isLike;
 				setLocalStorage(this.song.id, 'like', this.isLike);
+			},
+			changeProgress(event) {
+				console.log(event);
 			}
 		},
 		filters: {
@@ -176,13 +194,42 @@
 		top:100vw;
 		bottom:0;
 	}
-	.button-group .progress-bar,
 	.button-group .music-info,
 	.button-group .music-control,
 	.button-group .vol-bar,
 	.button-group .other-button{
 		height: 20%;
+	}
+	.button-group .progress-bar{
+		height: 16%;
 		min-height: 35px;
+	}
+	.progress-bar .progress-bar-line{
+		height: 5px;
+		background-color: #ccc;
+		position: relative;
+		margin-top: 2%;
+	}
+	.progress-bar-line .progress{
+		height: 100%;
+		background-color: #999;
+	}
+	.progress-bar-line .indicator{
+		display: block;
+	    width: 12px;
+	    height: 12px;
+	    background-color: #fff;
+	    border-radius: 50%;
+	    box-shadow: 0 2px 2px #ccc;
+	    position: absolute;
+	    top: -4px;
+	}
+	.progress-bar .time-indicator{
+		display: flex;
+		justify-content:space-between;
+		padding:10px;
+		line-height: 16px;
+		font-size: 12px;
 	}
 	.music-info p{
 		text-align: center;

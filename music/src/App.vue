@@ -6,7 +6,7 @@
       <rankpage v-if="rankPageShow"></rankpage>
     </transition>
     <div class="play-bar" @click="showPlayPage">
-      <audio id="music" :src="dataUrl" autoplay @ended="playContinue" :loop="loop"></audio>
+      <audio id="music" :src="dataUrl" autoplay @ended="playContinue" :loop="loop" @timeupdate="updateTime"></audio>
       <div class="bar-img">
         <img :src="coverImgUrl" alt="">
       </div>
@@ -71,6 +71,10 @@
       },
       showPlayPage() {
         this.playPageShow = true;
+      },
+      updateTime() {
+        this.$store.commit('updateCurrentTime', parseInt(document.getElementById('music').currentTime));
+        this.$store.commit('updateDuration', parseInt(document.getElementById('music').duration));
       }
     },
     watch: {

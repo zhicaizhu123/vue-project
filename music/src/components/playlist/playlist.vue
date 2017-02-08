@@ -1,6 +1,8 @@
 <template>
 	<div class="play-list-container">
-		<action v-if="actionShow" :action-index="actionIndex" :parent-page="'listPage'"></action>
+		<transition name="action-animation">
+			<action v-if="actionShow" :action-index="actionIndex" :parent-page="'listPage'"></action>
+		</transition>
 		<div class="play-list-header">
 			<img :src="modeIcon" alt="">
 			<div class="play-mode">{{modeText}}播放 {{playList.length}}首歌曲</div>
@@ -30,8 +32,8 @@
 <script>
 	import {mapState} from 'vuex';
 	import BScroll from 'better-scroll';
-	import single from 'assets/icon-share.png';
-	import suiji from 'assets/icon-danqu.png';
+	import single from 'assets/icon-danqu.png';
+	import suiji from 'assets/icon-suiji.png';
 	import xunhuan from 'assets/icon-xunhuan.png';
 	import action from '../action/action';
 	export default {
@@ -171,5 +173,13 @@
 		width:15px;
 		height: 15px;
 		margin-left: 10px;
+	}
+	.action-animation-enter-active,.action-animation-leave-active{
+		transition:all .3s;
+		opacity: 1;
+	}
+	.action-animation-enter,.action-animation-leave-active{
+		transform:translateY(100%);
+		opacity: 0;
 	}
 </style>

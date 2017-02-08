@@ -1,5 +1,8 @@
 <template>
 	<div class="search-wrap">
+		<transition name="action-animation">
+			<action v-if="actionShow" :parent-page="'rankPage'" :song-list="songList"></action>
+		</transition>
 		<div class="search">
 			<div class="search-input">
 				<img src="./../../assets/icon-search.png" alt="">
@@ -31,7 +34,7 @@
 		</div>
 		<div id="resultContainer" class="result-container" v-if="searchResult!=null&&searchShow">
 			<div class="result">
-				<div class="result-group" v-if="searchResult.song!==null">
+				<div class="result-group" v-if="searchResult.song">
 					<div class="group-title">
 						<img src="../../assets/icon-music.png" alt="">
 						<span class="title-text">单曲</span>
@@ -39,12 +42,12 @@
 					<div class="group-item" v-for="(item, index) in searchResult.song.itemlist">
 						<span class="result-song" @click="play(index)">{{item.name}}</span>
 						<span class="result-singer" @click="play(index)">-{{item.singer}}</span>
-						<div class="action-button">
+						<div class="action-button" @click="showAction(index)">
 							<img src="../../assets/icon-...black.png" alt="">
 						</div>
 					</div>
 				</div>
-				<div class="result-group" v-if="searchResult.album!==null">
+				<div class="result-group" v-if="searchResult.album">
 					<div class="group-title">
 						<img src="../../assets/icon-album.png" alt="">
 						<span class="title-text">专辑</span>
@@ -57,7 +60,7 @@
 				        </div>
 					</div>
 				</div>
-				<div class="result-group" v-if="searchResult.album!==null">
+				<!-- <div class="result-group" v-if="searchResult.singer">
 					<div class="group-title">
 						<img src="../../assets/icon-singer.png" alt="">
 						<span class="title-text">歌手</span>
@@ -68,7 +71,7 @@
 			            <p>{{item.name}}</p>
 			          </div>
 			        </div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 		<transition name="album-slide">
@@ -80,6 +83,7 @@
 <script>
 	import BScroll from 'better-scroll';
 	import album from '../album/album';
+	import action from '../action/action';
 	export default {
 		data() {
 			return {
@@ -89,7 +93,9 @@
 				hotKeyList: null,
 				searchResult: null,
 				albumShow: false,
-				mid: 0
+				mid: 0,
+				actionShow: false,
+				songList: {}
 			};
 		},
 		created() {
@@ -157,7 +163,6 @@
 					jsonp: 'jsonpCallback'
 				}).then((response) => {
 					this.searchResult = response.data.data;
-					console.log(this.searchResult);
 					var index = this.historyList.indexOf(key);
 					if (index !== -1) {
 						this.historyList.splice(index, 1);
@@ -177,14 +182,28 @@
 				});
 			},
 			play(index) {
+				let list = [...this.searchResult.song.itemlist];
 				this.$store.commit('setPlayList', {
 					index: index,
-					list: this.searchResult.song.itemlist
+					list: list
 				});
 			},
 			showAlbum(mid) {
 				this.albumShow = true;
 				this.mid = mid;
+			},
+			showAction(num) {
+				this.actionIndex = num;
+				let theSongList = this.searchResult.song.itemlist[num];
+				this.songList = {
+					songid: theSongList.id,
+					songmid: theSongList.mid,
+					songorig: theSongList.name,
+					singer: theSongList.singer
+				};
+				this.$nextTick(() => {
+					this.actionShow = true;
+				});
 			}
 		},
 		filters: {
@@ -193,7 +212,8 @@
 			}
 		},
 		components: {
-			album
+			album,
+			action
 		}
 	};
 </script>
@@ -270,6 +290,7 @@
   		background-color: #fff;
   		padding:0 10px;
   		max-height: 66px;
+  		overflow: hidden;
   	}
   	.history-item{
   		margin:5px;
@@ -380,5 +401,13 @@
 	}
 	.album-slide-enter, .album-slide-leave-active {
 	  transform:translateX(100%);
+	}
+	.action-animation-enter-active,.action-animation-leave-active{
+		transition:all .3s;
+		opacity: 1;
+	}
+	.action-animation-enter,.action-animation-leave-active{
+		transform:translateY(100%);
+		opacity: 0;
 	}
 </style>
