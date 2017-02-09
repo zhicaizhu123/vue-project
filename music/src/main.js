@@ -15,6 +15,7 @@ const store = new Vuex.Store({
 		playing: true,
 		currentTime: 0,
 		duration: 0,
+		volume: 0.5,
 		playMode: SEQUENTIAL,
 		index: 0,
 		coverImgUrl: 'http://y.gtimg.cn/music/photo_new/T002R300x300M000003RMaRI1iFoYd.jpg?max_age=2592000',
@@ -104,6 +105,9 @@ const store = new Vuex.Store({
 		},
 		updateDuration (state, time) {
 			state.duration = time;
+		},
+		updateCurrentVol (state, vol) {
+			state.volume = vol;
 		}
 	},
 	getters: { // 需要复用这段代码

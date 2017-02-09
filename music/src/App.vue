@@ -52,7 +52,7 @@
         }
       }),
       ...mapState([
-        'playing', 'song', 'coverImgUrl', 'rankid', 'playMode', 'playList'
+        'playing', 'song', 'coverImgUrl', 'rankid', 'playMode', 'playList', 'volume'
       ]),
       loop() {
         if (this.playMode === 0 || this.playList.length === 1) {
@@ -61,6 +61,9 @@
           return false;
         }
       }
+    },
+    mounted() {
+      document.getElementById('music').volume = this.volume;
     },
     methods: {
       ...mapMutations(
@@ -75,6 +78,13 @@
       updateTime() {
         this.$store.commit('updateCurrentTime', parseInt(document.getElementById('music').currentTime));
         this.$store.commit('updateDuration', parseInt(document.getElementById('music').duration));
+      },
+      changeTime(time) {
+        document.getElementById('music').currentTime = time;
+      },
+      changeVol(vol) {
+        document.getElementById('music').volume = vol;
+        this.$store.commit('updateCurrentVol', vol);
       }
     },
     watch: {

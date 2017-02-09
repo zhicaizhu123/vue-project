@@ -44,16 +44,16 @@
 				</ul>
 			</div>
 			<div class="vol-bar">
-				<div class="volue-icon volue-left">
+				<div class="volue-icon volue-left" @click="setExtreme(false)">
 					<img src="../../assets/icon-volue-left.png" alt="">
 				</div>
 				<div class="vol-bar-line">
-					<div class="vol-line">
-						<span class="current-vol"></span>
-						<span class="vol-button"></span>
+					<div id="volLine" class="vol-line" ref="volLine">
+						<span id="currentVol" class="current-vol" :style="{'width': volPosition + '%'}"></span>
+						<span class="vol-button" :style="{'left': volPosition + '%'}" @touchmove.stop.prevent="changeVol"></span>
 					</div>
 				</div>
-				<div class="volue-icon volue-right">
+				<div class="volue-icon volue-right" @click="setExtreme(true)">
 					<img src="../../assets/icon-volue-right.png" alt="">
 				</div>
 			</div>
@@ -101,6 +101,9 @@
 			...mapState({
 				indicatorPosition (state) {
 					return state.currentTime / state.duration * 100;
+				},
+				volPosition (state) {
+					return state.volume * 100;
 				}
 			})
 		},
@@ -128,8 +131,31 @@
 				setLocalStorage(this.song.id, 'like', this.isLike);
 			},
 			changeProgress(event) {
-				console.log(event);
+				var clientX = event.changedTouches[0].clientX;
+				var fullWidth = window.innerWidth;
+				var proportion = clientX / fullWidth;
+				var allTime = this.$store.state.duration;
+				var currentTime = Math.round(allTime * proportion);
+				this.$parent.changeTime(currentTime);
+			},
+			changeVol(event) {
+				// console.log(event);
+				var clientX = event.changedTouches[0].clientX;
+				var windowWidth = window.innerWidth;
+				var fullWidth = this.$refs.volLine.getBoundingClientRect().width;
+				var offsetWidth = Math.floor((windowWidth - fullWidth) / 2);
+				var proportion = (clientX - offsetWidth) / fullWidth;
+				if (proportion < 0) {
+					proportion = 0;
+				} else if (proportion > 1) {
+					proportion = 1;
+				}
+				this.$parent.changeVol(proportion);
+			},
+			setExtreme(bool) {
+				bool ? this.$parent.changeVol(1) : this.$parent.changeVol(0);
 			}
+
 		},
 		filters: {
 			singer(val) {
@@ -275,9 +301,11 @@
 	}
 	.vol-bar .volue-left{
 		justify-content:flex-end;
+		padding-right:6px;
 	}
 	.vol-bar .volue-right{
 		justify-content:flex-start;
+		padding-left:16px;
 	}
 	.vol-bar .vol-bar-line{
 		width:70%;
@@ -293,7 +321,6 @@
 	}
 	.vol-line .current-vol{
 		display: block;
-		width:20%;
 		height: 100%;
 		background-color: #7f7f7f;
 	}
@@ -305,7 +332,6 @@
 		border-radius: 50%;
 		box-shadow: 0 2px 2px #ccc;
 		position: absolute;
-		left:20%;
 		top:-6.5px;
 	}
 	.playlist-slide-enter-active, .playlist-slide-leave-active {
